@@ -1,6 +1,7 @@
 import { buildTree, addProgress } from './tree-helpers.js';
 import NodeTree from './components/NodeTree.js';
 import LeafPane from './components/LeafPane.js';
+import ProgressRing from './components/ProgressRing.js';
 
 // All sections and leaves live in this one static file. The path is relative,
 // so the app works from any folder or static host (e.g. GitHub Pages).
@@ -31,7 +32,7 @@ function writeStored(key, value) {
 }
 
 const App = {
-    components: { NodeTree, LeafPane },
+    components: { NodeTree, LeafPane, ProgressRing },
     data() {
         return {
             nodes: [], // flat list from data/evolve.json: { id, parentId, type, title, content }
@@ -52,6 +53,14 @@ const App = {
         },
         treeData() {
             return addProgress(buildTree(this.nodesWithProgress));
+        },
+        // Overall progress for the ring in the header.
+        leafCount() {
+            return this.nodes.filter((node) => node.type === 'leaf').length;
+        },
+        coveredCount() {
+            // Counted from the leaves (not coveredIds.length) so ids of leaves removed from the data don't count.
+            return this.nodes.filter((node) => node.type === 'leaf' && this.coveredIds.includes(node.id)).length;
         },
         selectedLeaf() {
             return this.nodesWithProgress.find((node) => node.id === this.selectedLeafId) || null;
@@ -183,6 +192,7 @@ const App = {
         <header class="app-header">
             <img src="./icon.svg" alt="">
             <h1>Evolve</h1>
+            <ProgressRing v-if="leafCount > 0" :covered="coveredCount" :total="leafCount" />
         </header>
 
         <div

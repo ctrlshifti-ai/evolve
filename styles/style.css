@@ -34,6 +34,27 @@ body {
     flex: 1;
 }
 
+/* Overall progress ring in the top-right corner of the header */
+.progress-ring {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+}
+
+.progress-ring__arc {
+    fill: none;
+    stroke: #4fc38a;
+    stroke-width: 3;
+    stroke-linecap: round; /* rounded ends; at 0% this is what draws the dot */
+    transition: stroke-dasharray 0.3s;
+}
+
+.progress-ring__text {
+    fill: #d9d9d9;
+    font-size: 10px;
+    font-weight: bold;
+}
+
 #app {
     display: flex;
     flex-direction: column;
