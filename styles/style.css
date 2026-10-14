@@ -1,0 +1,420 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background-color: #1f2430;
+    color: #d9d9d9;
+    font-family: Arial, Helvetica, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.app-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 10px;
+    border-bottom: solid 2px #2c3344;
+    position: sticky;
+    top: 0;
+    background-color: #1f2430;
+    z-index: 10;
+}
+
+.app-header img {
+    width: 26px;
+    height: 26px;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.app-header h1 {
+    font-size: 17px;
+    margin: 0;
+    flex: 1;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+}
+
+.placeholder {
+    opacity: 0.6;
+    text-align: center;
+    padding: 40px 16px;
+}
+
+/* ---------- two-pane layout ---------- */
+.evolve-layout {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: var(--tree-width, 320px) 6px minmax(0, 1fr);
+}
+
+.evolve-layout--resizing {
+    cursor: col-resize;
+    user-select: none;
+}
+
+.tree-pane {
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.pane-resizer {
+    cursor: col-resize;
+    background-color: #2c3344;
+    touch-action: none;
+}
+
+.pane-resizer:hover,
+.evolve-layout--resizing .pane-resizer {
+    background-color: #268d5c;
+}
+
+.content-pane {
+    position: relative; /* anchors the floating prev/next buttons */
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ---------- tree (left pane) ---------- */
+.tree-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 6px 8px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.tree-row:hover {
+    background-color: #262c3b;
+}
+
+.tree-row--selected {
+    background-color: #262c3b;
+    box-shadow: inset 3px 0 0 #268d5c;
+}
+
+.tree-row__icon {
+    width: 16px;
+    flex-shrink: 0;
+    text-align: center;
+    color: #268d5c;
+}
+
+.tree-row__icon--leaf {
+    font-size: 13px;
+}
+
+.tree-row__title {
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ---------- leaf content (right pane) ---------- */
+.leaf-pane {
+    /* Size of leaf content; everything below scales from it. Was 15px, enlarged for readability. */
+    --leaf-font-size: 24px;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 16px 16px;
+}
+
+.leaf-pane__bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.leaf-pane__back {
+    display: none;
+    padding: 6px 10px;
+    background: transparent;
+    color: #d9d9d9;
+    border: solid 2px #268d5c;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.leaf-pane__title {
+    margin: 10px 0;
+    font-size: calc(var(--leaf-font-size) * 1.45);
+}
+
+/* Phones: one pane at a time — the tree, or the open leaf with a back button. */
+@media (max-width: 700px) {
+    .evolve-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .pane-resizer,
+    .content-pane {
+        display: none;
+    }
+
+    .evolve-layout--leaf-open .tree-pane {
+        display: none;
+    }
+
+    .evolve-layout--leaf-open .content-pane {
+        display: flex;
+    }
+
+    .leaf-pane__back {
+        display: inline-block;
+    }
+}
+
+/* ---------- progress ---------- */
+.tree-row__icon--done {
+    color: #4fc38a;
+    font-weight: bold;
+}
+
+.tree-row__title--done {
+    opacity: 0.6;
+}
+
+.section-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 8px 6px 32px;
+    cursor: pointer;
+}
+
+.section-progress__bar {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background-color: #2c3344;
+    overflow: hidden;
+}
+
+.section-progress__fill {
+    height: 100%;
+    background-color: #268d5c;
+    transition: width 0.3s;
+}
+
+.section-progress__text {
+    flex-shrink: 0;
+    font-size: 11px;
+    opacity: 0.6;
+}
+
+.covered-button {
+    margin-left: auto; /* sits on the right of the bar */
+    padding: 6px 12px;
+    background: transparent;
+    color: #d9d9d9;
+    border: solid 2px #268d5c;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.covered-button--done {
+    background-color: #268d5c;
+    color: #fff;
+}
+
+/* ---------- rendered Markdown (leaf read view) ---------- */
+.leaf-pane__view {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: 90px; /* room so the floating prev/next bar never covers the last lines */
+}
+
+.markdown {
+    font-size: var(--leaf-font-size);
+    line-height: 1.6;
+    overflow-wrap: break-word;
+}
+
+.markdown h1,
+.markdown h2 {
+    font-size: 1.2em;
+    margin: 24px 0 8px;
+}
+
+.markdown h3 {
+    margin: 22px 0 6px;
+    font-size: 0.8em;
+    letter-spacing: 0.06em;
+    color: #4fc38a;
+}
+
+.markdown h3:first-child {
+    margin-top: 4px;
+}
+
+.markdown p {
+    margin: 0 0 10px;
+}
+
+.markdown ul,
+.markdown ol {
+    margin: 0 0 10px;
+    padding-left: 22px;
+}
+
+.markdown li {
+    margin: 2px 0;
+}
+
+.markdown a {
+    color: #4fc38a;
+    word-break: break-all;
+}
+
+.markdown code {
+    font-family: Consolas, Menlo, monospace;
+    font-size: 0.88em;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background-color: #2c3344;
+}
+
+.markdown pre {
+    margin: 0 0 14px;
+    padding: 12px 14px;
+    overflow-x: auto;
+    border-radius: 8px;
+    background-color: #151922;
+    border: solid 1px #2c3344;
+}
+
+.markdown pre code {
+    padding: 0;
+    background: none;
+    font-size: 0.87em;
+    line-height: 1.5;
+}
+
+/* Diagrams: mermaid replaces the text inside with an SVG */
+.markdown pre.mermaid {
+    display: flex;
+    justify-content: center;
+    background-color: #1a1f2a;
+}
+
+.markdown pre.mermaid svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Images (mostly black-on-transparent diagrams): give them a light card so they're readable */
+.markdown img {
+    display: block;
+    max-width: min(100%, 1120px);
+    height: auto;
+    margin: 6px 0 4px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f4f4f4;
+}
+
+/* Embedded YouTube player. YouTube requires the player to be at least 200 x 200 px,
+   so on narrow phones it keeps that height even if it can't stay exactly 16:9. */
+.markdown .youtube-embed {
+    display: block;
+    width: 100%;
+    max-width: 1120px;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    min-height: 200px;
+    margin: 6px 0 4px;
+    border: 0;
+    border-radius: 8px;
+    background-color: #000;
+}
+
+/* The credit line under an image */
+.markdown img + br + em,
+.markdown p > em:only-child {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 0.8em;
+    opacity: 0.6;
+}
+
+.markdown blockquote {
+    margin: 0 0 10px;
+    padding-left: 12px;
+    border-left: solid 3px #268d5c;
+    opacity: 0.85;
+}
+
+.markdown table {
+    border-collapse: collapse;
+    margin-bottom: 12px;
+}
+
+.markdown th,
+.markdown td {
+    padding: 6px 10px;
+    border: solid 1px #2c3344;
+}
+
+/* ---------- floating previous / next ---------- */
+.leaf-nav {
+    position: absolute;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    background-color: #262c3b;
+    border: solid 2px #268d5c;
+    border-radius: 999px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+.leaf-nav__button {
+    padding: 8px 16px;
+    background: transparent;
+    color: #d9d9d9;
+    border: none;
+    border-radius: 999px;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.leaf-nav__button:hover:not(:disabled) {
+    background-color: #268d5c;
+    color: #fff;
+}
+
+.leaf-nav__button:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.leaf-nav__position {
+    padding: 0 6px;
+    font-size: 12px;
+    opacity: 0.7;
+    white-space: nowrap;
+}

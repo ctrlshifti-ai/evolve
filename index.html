@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolve</title>
+    <link rel="icon" href="./icon.svg">
+    <link rel="stylesheet" href="./lib/he-tree-vue/he-tree.css">
+    <link rel="stylesheet" href="./styles/style.css">
+</head>
+<body>
+    <div id="app"></div>
+
+    <!-- Vendored libraries (order matters: he-tree needs Vue, vue-demi and virtual-list first).
+         marked + DOMPurify + mermaid render leaf content (Markdown, links, diagrams). -->
+    <script src="./lib/vue/vue.global.js"></script>
+    <script src="./lib/he-tree-vue/vue-demi.iife.js"></script>
+    <script src="./lib/he-tree-vue/virtual-list.iife.js"></script>
+    <script src="./lib/he-tree-vue/he-tree.iife.js"></script>
+    <script src="./lib/marked/marked.umd.js"></script>
+    <script src="./lib/dompurify/purify.min.js"></script>
+    <script src="./lib/mermaid/mermaid.min.js"></script>
+
+    <!-- App -->
+    <script type="module" src="./src/app.js"></script>
+</body>
+</html>
